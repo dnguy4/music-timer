@@ -32,6 +32,7 @@ export default function CountdownApp() {
 
   const timerColors = {
     notstarted: "container mx-auto min-h-screen bg-green-700",
+    // notstarted: "columns-1 min-h-screen bg-green-700",
     starting: "container mx-auto min-h-screen bg-green-500",
     stopping: "container mx-auto min-h-screen bg-red-500",
     stop: "container mx-auto min-h-screen bg-red-700",
@@ -133,20 +134,17 @@ export default function CountdownApp() {
   };
 
   return (
-    // <div className="container mx-auto min-h-screen bg-green-500/80">
     <div className={timerClass}>
       <div className="flex flex-col text-center space-y-4">
-        <h1 className="text-5xl font-extrabold font-mono text-white pt-4">
-          Bullet
-          <label className="swap swap-flip text-5xl">
+        <div className="text-5xl font-extrabold font-mono text-white pt-4">
+          <label className="swap">
             <input type="checkbox" onChange={(e) => swapPlaylist(e)} />
-            <div className="swap-off">❤️</div>
-            <div className="swap-on">⭐</div>
+            <span className="swap-off">Bullet ❤️ Timer</span>
+            <span className="swap-on">Bullet ⭐ Timer</span>
           </label>
-          Timer
-        </h1>
+        </div>
         <YouTube
-          className="grid justify-items-center"
+          className="flex h-parent justify-center"
           videoId="Ai8FB3ND_5c"
           onPlay={handleStart}
           onPause={handleStop}
@@ -155,7 +153,8 @@ export default function CountdownApp() {
         />
       </div>
       <div className="flex flex-col space-y-4 pt-4">
-        <div className="countdown font-mono text-8xl m-auto text-white bg-slate-700 w-2/3 justify-center border-4 border-sky-500">
+        <div className="countdown font-mono text-8xl m-auto text-white 
+        bg-slate-700 w-full md:w-2/3 justify-center border-y-2 md:border-4 border-sky-500">
           <span style={{ "--value": twoDigits(hoursToDisplay) }} />
           :
           <span style={{ "--value": twoDigits(minutesToDisplay) }} />

@@ -20,7 +20,7 @@ export default function CountdownApp() {
   const [startTime, setStartTime] = useState(Date.now()); // Prevents desync
   const [timeLimit, setTimeLimit] = useState(INITIAL_COUNT);
 
-  const [player, setPlayer] = useState();
+  const [player, setPlayer] = useState<YouTubePlayer>();
   const [playlist, setPlaylist] = useState(
     "PLwvhJFemdC7PbBVZmbQN9iPguECgjyHRw"
   );
@@ -37,7 +37,7 @@ export default function CountdownApp() {
     stopping: "container mx-auto min-h-screen bg-red-500",
     stop: "container mx-auto min-h-screen bg-red-700",
   };
-  let timerClass;
+  let timerClass: string;
   if (status === STATUS.STOPPED && minutesRemaining > 0) {
     timerClass = timerColors["notstarted"];
   } else if (status === STATUS.STOPPED) {
@@ -70,7 +70,7 @@ export default function CountdownApp() {
     player?.pauseVideo();
   };
 
-  const timeAlert = (remaining, prevRemaining) => {
+  const timeAlert = (remaining: number, prevRemaining: number) => {
     const synth = window.speechSynthesis;
     if (synth.speaking || prevRemaining === remaining) return;
 
@@ -108,11 +108,11 @@ export default function CountdownApp() {
     // passing null stops the interval
   );
 
-  const handleReady = (event) => {
+  const handleReady = (event: YouTubeEvent) => {
     setPlayer(event.target);
     event.target.setVolume(60);
   };
-  const swapPlaylist = (e) => {
+  const swapPlaylist = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
       // Star
       setPlaylist("OLAK5uy_n64BgoFQqplG5_U72otFKMswV0vaKEjOM");
@@ -123,7 +123,7 @@ export default function CountdownApp() {
       player?.cueVideoById("Ai8FB3ND_5c");
     }
   };
-  const opts = {
+  const opts: YouTubeProps["opts"] = {
     playerVars: {
       autoplay: 0,
       loop: 1,
@@ -139,8 +139,8 @@ export default function CountdownApp() {
         <div className="text-5xl font-extrabold font-mono text-white pt-4">
           <label className="swap">
             <input type="checkbox" onChange={(e) => swapPlaylist(e)} />
-            <span className="swap-off">Bullet ❤️ Timer</span>
-            <span className="swap-on">Bullet ⭐ Timer</span>
+            <span className="swap-off">Bullet❤️ Timer</span>
+            <span className="swap-on">Bullet⭐ Timer</span>
           </label>
         </div>
         <YouTube
@@ -155,11 +155,11 @@ export default function CountdownApp() {
       <div className="flex flex-col space-y-4 pt-4">
         <div className="countdown font-mono text-8xl m-auto text-white 
         bg-slate-700 w-full md:w-2/3 justify-center border-y-2 md:border-4 border-sky-500">
-          <span style={{ "--value": twoDigits(hoursToDisplay) }} />
+          <span style={{ "--value": twoDigits(hoursToDisplay) } as CSSProperties} />
           :
-          <span style={{ "--value": twoDigits(minutesToDisplay) }} />
+          <span style={{ "--value": twoDigits(minutesToDisplay) } as CSSProperties} />
           :
-          <span style={{ "--value": twoDigits(secondsToDisplay) }} />
+          <span style={{ "--value": twoDigits(secondsToDisplay) } as CSSProperties} />
         </div>
         <div className="join justify-center">
           <button onClick={handleStart} className="btn btn-primary join-item">
@@ -188,8 +188,8 @@ export default function CountdownApp() {
   );
 }
 // source: https://overreacted.io/making-setinterval-declarative-with-react-hooks/
-function useInterval(callback, delay) {
-  const savedCallback = useRef(null);
+function useInterval(callback: CallableFunction, delay: number | null) {
+  const savedCallback = useRef<CallableFunction | null>(null);
 
   // Remember the latest callback.
   useEffect(() => {
@@ -211,4 +211,4 @@ function useInterval(callback, delay) {
 }
 
 // https://stackoverflow.com/a/2998874/1673761
-const twoDigits = (num) => String(num).padStart(2, "0");
+const twoDigits = (num: number) => String(num).padStart(2, "0");

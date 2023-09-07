@@ -12,13 +12,16 @@ const STATUS = {
   STOPPED: "Stopped",
 };
 
-const INITIAL_COUNT = 180;
+type Props = {
+  initialTimeLimit?: number
+}
 
-export default function CountdownApp() {
-  const [secondsRemaining, setSecondsRemaining] = useState(INITIAL_COUNT);
+export default function CountdownApp(props: Props) {
+  const {initialTimeLimit = 180} = props;
+  const [secondsRemaining, setSecondsRemaining] = useState(initialTimeLimit);
   const [status, setStatus] = useState(STATUS.STOPPED);
   const [startTime, setStartTime] = useState(Date.now()); // Prevents desync
-  const [timeLimit, setTimeLimit] = useState(INITIAL_COUNT);
+  const [timeLimit, setTimeLimit] = useState(initialTimeLimit);
 
   const [player, setPlayer] = useState<YouTubePlayer>();
   const [playlist, setPlaylist] = useState(
@@ -28,25 +31,23 @@ export default function CountdownApp() {
   const secondsToDisplay = secondsRemaining % 60;
   const minutesRemaining = (secondsRemaining - secondsToDisplay) / 60;
   const minutesToDisplay = minutesRemaining % 60;
-  const hoursToDisplay = (minutesRemaining - minutesToDisplay) / 60;
+  // const hoursToDisplay = (minutesRemaining - minutesToDisplay) / 60;
 
-  const timerColors = {
-    notstarted: "container mx-auto min-h-screen bg-green-700",
-    // notstarted: "columns-1 min-h-screen bg-green-700",
-    starting: "container mx-auto min-h-screen bg-green-500",
-    stopping: "container mx-auto min-h-screen bg-red-500",
-    stop: "container mx-auto min-h-screen bg-red-700",
-  };
-  let timerClass: string;
-  if (status === STATUS.STOPPED && minutesRemaining > 0) {
-    timerClass = timerColors["notstarted"];
-  } else if (status === STATUS.STOPPED) {
-    timerClass = timerColors["stop"];
-  } else if (minutesRemaining > 0) {
-    timerClass = timerColors["starting"];
-  } else {
-    timerClass = timerColors["stopping"];
+  const colorsConfig: {[x: string]: {[y: string]: string}} = {
+    [STATUS.STOPPED]: {
+      0: 'bg-red-700',
+      1: 'bg-blue-700',
+      2: 'bg-green-700',
+      3: 'bg-green-700',
+    },
+    [STATUS.STARTED]: {
+      0: 'bg-red-500',
+      1: 'bg-blue-500',
+      2: 'bg-green-500',
+      3: 'bg-green-500'
+    }
   }
+  let timerColor = colorsConfig[status][minutesRemaining]
 
   const handleStart = () => {
     if (secondsRemaining > 0 && status !== STATUS.STARTED) {
@@ -64,8 +65,8 @@ export default function CountdownApp() {
   };
   const handleReset = () => {
     setStatus(STATUS.STOPPED);
-    setSecondsRemaining(INITIAL_COUNT);
-    setTimeLimit(INITIAL_COUNT);
+    setSecondsRemaining(initialTimeLimit);
+    setTimeLimit(initialTimeLimit);
     player?.seekTo(0);
     player?.pauseVideo();
   };
@@ -134,12 +135,12 @@ export default function CountdownApp() {
   };
 
   return (
-    <div className={timerClass}>
+    <div className={`container mx-auto min-h-screen ${timerColor}`}>
       <div className="flex flex-col text-center space-y-4">
-        <div className="text-5xl font-extrabold font-mono text-white pt-4">
+        <div className="text-5xl font-ironman text-white pt-4">
           <label className="swap">
             <input type="checkbox" onChange={(e) => swapPlaylist(e)} />
-            <span className="swap-off">Bullet❤️ Timer</span>
+            <span className="swap-off" >Bullet❤️ Timer</span>
             <span className="swap-on">Bullet⭐ Timer</span>
           </label>
         </div>
@@ -155,8 +156,6 @@ export default function CountdownApp() {
       <div className="flex flex-col space-y-4 pt-4">
         <div className="countdown font-mono text-8xl m-auto text-white 
         bg-slate-700 w-full md:w-2/3 justify-center border-y-2 md:border-4 border-sky-500">
-          <span style={{ "--value": twoDigits(hoursToDisplay) } as CSSProperties} />
-          :
           <span style={{ "--value": twoDigits(minutesToDisplay) } as CSSProperties} />
           :
           <span style={{ "--value": twoDigits(secondsToDisplay) } as CSSProperties} />
@@ -182,7 +181,8 @@ export default function CountdownApp() {
             Shuffle
           </button>
         </div>
-        {/* <div>Status: {status}</div> */}
+        {/* <button className="btn btn-neutral self-center mr-2 hidden sm:block">&lt;</button>
+        <button className="btn btn-neutral self-center ml-2 hidden sm:block">&gt;</button> */}
       </div>
     </div>
   );

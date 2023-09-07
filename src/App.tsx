@@ -1,4 +1,3 @@
-import "./App.css";
 import CountdownApp from "./components/timerDate";
 
 function App() {

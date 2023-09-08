@@ -1,10 +1,13 @@
-import CountdownApp from "./components/timerDate";
+import { Route, Routes } from "react-router-dom";
+import BulletTime from "./pages/Bullet";
+import Home from "./pages/Home";
 
 function App() {
   return (
-    <div className="App">
-      <CountdownApp></CountdownApp>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/bullet" element={<BulletTime />} />
+    </Routes>
   );
 }
 

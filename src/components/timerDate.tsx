@@ -13,44 +13,50 @@ const STATUS = {
 };
 
 type Props = {
-  initialTimeLimit?: number
-}
+  playlist: string;
+  videoId: string;
+  initialTimeLimit?: number;
+};
 
 export default function CountdownApp(props: Props) {
-  const {initialTimeLimit = 180} = props;
+  const { videoId, playlist, initialTimeLimit = 180 } = props;
+
   const [secondsRemaining, setSecondsRemaining] = useState(initialTimeLimit);
   const [status, setStatus] = useState(STATUS.STOPPED);
   const [startTime, setStartTime] = useState(Date.now()); // Prevents desync
   const [timeLimit, setTimeLimit] = useState(initialTimeLimit);
 
   const [player, setPlayer] = useState<YouTubePlayer>();
-  const [playlist, setPlaylist] = useState(
-    "PLwvhJFemdC7PbBVZmbQN9iPguECgjyHRw"
-  );
 
   const secondsToDisplay = secondsRemaining % 60;
   const minutesRemaining = (secondsRemaining - secondsToDisplay) / 60;
   const minutesToDisplay = minutesRemaining % 60;
   // const hoursToDisplay = (minutesRemaining - minutesToDisplay) / 60;
 
-  const colorsConfig: {[x: string]: {[y: string]: string}} = {
+  const colorsConfig: { [x: string]: { [y: string]: string } } = {
     [STATUS.STOPPED]: {
-      0: 'bg-red-700',
-      1: 'bg-blue-700',
-      2: 'bg-green-700',
-      3: 'bg-green-700',
+      0: "bg-red-700",
+      1: "bg-blue-700",
+      2: "bg-green-700",
+      3: "bg-green-700",
     },
     [STATUS.STARTED]: {
-      0: 'bg-red-500',
-      1: 'bg-blue-500',
-      2: 'bg-green-500',
-      3: 'bg-green-500'
-    }
+      0: "bg-red-500",
+      1: "bg-blue-500",
+      2: "bg-green-500",
+      3: "bg-green-500",
+    },
+  };
+  let timerColor: string;
+  if (minutesRemaining < 4) {
+    timerColor = colorsConfig[status][minutesRemaining];
+  } else {
+    timerColor = "bg-blue-700";
   }
-  let timerColor = colorsConfig[status][minutesRemaining]
 
   const handleStart = () => {
     if (secondsRemaining > 0 && status !== STATUS.STARTED) {
+      speechSynthesis.speak(new SpeechSynthesisUtterance(""));
       setStatus(STATUS.STARTED);
       setStartTime(Date.now());
       player?.playVideo();
@@ -113,22 +119,11 @@ export default function CountdownApp(props: Props) {
     setPlayer(event.target);
     event.target.setVolume(60);
   };
-  const swapPlaylist = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.checked) {
-      // Star
-      setPlaylist("OLAK5uy_n64BgoFQqplG5_U72otFKMswV0vaKEjOM");
-      player?.cueVideoById("yEBMQwAWGFI");
-    } else {
-      // Heart
-      setPlaylist("PLwvhJFemdC7PbBVZmbQN9iPguECgjyHRw");
-      player?.cueVideoById("Ai8FB3ND_5c");
-    }
-  };
   const opts: YouTubeProps["opts"] = {
     playerVars: {
       autoplay: 0,
       loop: 1,
-      list: playlist,
+      ...(playlist !== "" && { list: playlist }),
       listType: "playlist",
       enablejsapi: true,
     },
@@ -136,29 +131,26 @@ export default function CountdownApp(props: Props) {
 
   return (
     <div className={`container mx-auto min-h-screen ${timerColor}`}>
-      <div className="flex flex-col text-center space-y-4">
-        <div className="text-5xl font-ironman text-white pt-4">
-          <label className="swap">
-            <input type="checkbox" onChange={(e) => swapPlaylist(e)} />
-            <span className="swap-off" >Bullet❤️ Timer</span>
-            <span className="swap-on">Bullet⭐ Timer</span>
-          </label>
-        </div>
+      <div className="flex flex-col space-y-4 pt-4">
         <YouTube
           className="flex h-parent justify-center"
-          videoId="Ai8FB3ND_5c"
+          videoId={videoId}
           onPlay={handleStart}
           onPause={handleStop}
           onReady={handleReady}
           opts={opts}
         />
-      </div>
-      <div className="flex flex-col space-y-4 pt-4">
-        <div className="countdown font-mono text-8xl m-auto text-white 
-        bg-slate-700 w-full md:w-2/3 justify-center border-y-2 md:border-4 border-sky-500">
-          <span style={{ "--value": twoDigits(minutesToDisplay) } as CSSProperties} />
+        <div
+          className="countdown font-mono text-8xl m-auto text-white 
+        bg-slate-700 w-full md:w-2/3 justify-center border-y-2 md:border-4 border-sky-500"
+        >
+          <span
+            style={{ "--value": twoDigits(minutesToDisplay) } as CSSProperties}
+          />
           :
-          <span style={{ "--value": twoDigits(secondsToDisplay) } as CSSProperties} />
+          <span
+            style={{ "--value": twoDigits(secondsToDisplay) } as CSSProperties}
+          />
         </div>
         <div className="join justify-center">
           <button onClick={handleStart} className="btn btn-primary join-item">

@@ -130,7 +130,7 @@ export default function CountdownApp(props: Props) {
   };
 
   return (
-    <div className={`container mx-auto min-h-screen ${timerColor}`}>
+    <div className={`container max-w-full min-h-screen ${timerColor}`}>
       <div className="flex flex-col space-y-4 pt-4">
         <YouTube
           className="flex h-parent justify-center"
@@ -164,9 +164,9 @@ export default function CountdownApp(props: Props) {
           </button>
           <button
             onClick={() => {
-              player?.setShuffle(true);
-              player?.nextVideo();
-              player?.stopVideo();
+              player.setShuffle(true);
+              player.nextVideo();
+              player.pauseVideo();
             }}
             className="btn btn-neutral join-item"
           >

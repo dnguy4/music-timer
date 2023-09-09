@@ -5,15 +5,21 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import NotFound from "./pages/Error";
+import BulletTime from "./pages/Bullet";
+import Home from "./pages/Home";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Home />,
+    errorElement: <NotFound />,
+  },
+  {
+    path: "/bullet",
+    element: <BulletTime />,
     errorElement: <NotFound />,
   },
 ]);

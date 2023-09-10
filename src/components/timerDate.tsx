@@ -16,10 +16,16 @@ type Props = {
   playlist: string;
   videoId: string;
   initialTimeLimit?: number;
+  voiceAlert?: boolean;
 };
 
 export default function CountdownApp(props: Props) {
-  const { videoId, playlist, initialTimeLimit = 180 } = props;
+  const {
+    videoId,
+    playlist,
+    initialTimeLimit = 180,
+    voiceAlert = false,
+  } = props;
 
   const [secondsRemaining, setSecondsRemaining] = useState(initialTimeLimit);
   const [status, setStatus] = useState(STATUS.STOPPED);
@@ -79,7 +85,7 @@ export default function CountdownApp(props: Props) {
 
   const timeAlert = (remaining: number, prevRemaining: number) => {
     const synth = window.speechSynthesis;
-    if (synth.speaking || prevRemaining === remaining) return;
+    if (!voiceAlert || synth.speaking || prevRemaining === remaining) return;
 
     if (remaining > 0 && remaining % 60 === 0) {
       const u = new SpeechSynthesisUtterance();

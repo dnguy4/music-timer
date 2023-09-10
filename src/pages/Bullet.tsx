@@ -41,6 +41,7 @@ export default function BulletTime() {
         videoId={videoId}
         playlist={playlist}
         initialTimeLimit={180}
+        voiceAlert={true}
       />
       <p className="text-sm font-sans italic text-white p-1">
         This website is not associated with{" "}

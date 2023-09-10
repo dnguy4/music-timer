@@ -3,30 +3,35 @@ import TimerDate from "src/components/timerDate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { validatePlaylist } from "../youtube/validatePlaylist";
+import { clamp } from "src/components/editableTime";
 
 interface ExampleForm extends HTMLFormElement {
   playlistInput: HTMLInputElement;
   videoIdInput: HTMLInputElement;
+  timeLimitInput: HTMLInputElement;
 }
 
 export default function Home() {
   const [playlistId, setPlaylist] = useState("");
   const [videoId, setVideoId] = useState("lTRiuFIWV54?si=K1rEv0xygqI1cJO5");
   const [vidErrors, setVidErrors] = useState("");
+  const [initalTimeLimit, setInitialTimeLimit] = useState(25);
 
   const handleSubmit: FormEventHandler<ExampleForm> = async (
     e: FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
-    const { playlistInput, videoIdInput } = e.currentTarget;
-
-    const [validatedPlaylist, validatedVid, errorMsg] = await validatePlaylist(
-      playlistInput.value,
-      videoIdInput.value
-    );
-    setVidErrors(errorMsg);
-    if (validatedPlaylist !== "") setPlaylist(validatedPlaylist);
-    if (validatedVid !== "") setVideoId(validatedVid);
+    const { playlistInput, videoIdInput, timeLimit } = e.currentTarget;
+    if (playlistInput.value !== playlistId || videoIdInput.value !== videoId) {
+      const [validatedPlaylist, validatedVid, errorMsg] =
+        await validatePlaylist(playlistInput.value, videoIdInput.value);
+      setVidErrors(errorMsg);
+      if (validatedPlaylist !== "") setPlaylist(validatedPlaylist);
+      if (validatedVid !== "") setVideoId(validatedVid);
+    }
+    if (timeLimit.valueAsNumber) {
+      setInitialTimeLimit(clamp(timeLimit.valueAsNumber, 0, 99));
+    }
   };
 
   return (
@@ -48,17 +53,19 @@ export default function Home() {
               className="text-2xl flex flex-col md:flex-row
               justify-center"
             >
-              {/* <label>
+              <label>
                 Time Limit (mins):
                 <input
                   type="number"
                   className="input input-ghost text-l"
-                  // onChange={() => setVidErrors("")}
-                  defaultValue={25}
-                  name="initalTimeLimit"
+                  defaultValue={initalTimeLimit}
+                  min={1}
+                  max={99}
+                  step={1}
+                  name="timeLimit"
                   placeholder="Type time limit here"
                 />
-              </label> */}
+              </label>
               <label>
                 Playlist Id:
                 <input
@@ -101,7 +108,7 @@ export default function Home() {
       <TimerDate
         videoId={videoId}
         playlist={playlistId}
-        initialTimeLimit={25 * 60}
+        initialTimeLimit={initalTimeLimit * 60}
       />
     </div>
   );

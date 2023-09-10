@@ -2,7 +2,7 @@ import { CSSProperties, useEffect, useState } from "react";
 import useComponentVisible from "src/youtube/useComponentVisible";
 
 const twoDigits = (num: number) => String(num).padStart(2, "0");
-const clamp = (val: number, min: number, max: number) => {
+export const clamp = (val: number, min: number, max: number) => {
   return val > max ? max : val < min ? min : val;
 };
 
@@ -23,15 +23,17 @@ export default function EditableTime(props: Props) {
   const [minutes, setMinutes] = useState(minutesToDisplay);
 
   useEffect(() => {
+    // If component was closed, update the timer
     if (!isComponentVisible) {
       let newMins = clamp(minutes, 0, 99);
       let newSecs = clamp(seconds, 0, 59);
       onSubmit(newMins * 60 + newSecs);
     } else {
+      // If component was recently opened to editing mode, make sure up to date
       setMinutes(minutesToDisplay);
       setSeconds(secondsToDisplay);
     }
-  }, [isComponentVisible]);
+  }, [isComponentVisible]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (disableEditing && isComponentVisible) {
     setIsComponentVisible(false);
@@ -60,28 +62,41 @@ export default function EditableTime(props: Props) {
         </div>
       )}
       {isComponentVisible && (
-        <div
+        <form
           className="font-mono text-8xl bg-gray-200 text-black text-center
         flex flex-row place-content-center"
+          onSubmit={(e) => {
+            setIsComponentVisible(false);
+            e.preventDefault();
+          }}
         >
           <input
             type="number"
-            max={99}
             min={0}
+            max={99}
+            step={1}
             className="input text-8xl h-full w-1/2 bg-inherit text-right"
+            name="minutes"
             defaultValue={twoDigits(minutesToDisplay)}
-            onChange={(e) => setMinutes(e.target.valueAsNumber)}
+            onChange={(e) => {
+              if (e.target.checkValidity()) setMinutes(e.target.valueAsNumber);
+            }}
           />
           :
           <input
             type="number"
-            max={59}
             min={0}
+            max={59}
+            step={1}
             className="text-8xl w-1/2 bg-inherit"
+            name="seconds"
             defaultValue={twoDigits(secondsToDisplay)}
-            onChange={(e) => setSeconds(e.target.valueAsNumber)}
+            onChange={(e) => {
+              if (e.target.checkValidity()) setSeconds(e.target.valueAsNumber);
+            }}
           />
-        </div>
+          <button type="submit" className="hidden" />
+        </form>
       )}
     </div>
   );

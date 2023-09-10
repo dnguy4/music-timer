@@ -1,7 +1,7 @@
 import { FormEvent, FormEventHandler, useState } from "react";
-import CountdownApp from "src/components/timerDate";
+import TimerDate from "src/components/timerDate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { validatePlaylist } from "../youtube/validatePlaylist";
 
 interface ExampleForm extends HTMLFormElement {
@@ -41,40 +41,43 @@ export default function Home() {
           <div className="collapse-title text-xl font-medium w-15">
             Settings <FontAwesomeIcon icon={faGear} />
           </div>
-          <form
-            onSubmit={handleSubmit}
-            className="text-2xl flex flex-col md:flex-row 
-            justify-center collapse-content"
-          >
-            <label>
-              Playlist Id:
-              <input
-                type="text"
-                className="input input-ghost"
-                onChange={() => setVidErrors("")}
-                defaultValue={playlistId}
-                name="playlistInput"
-                placeholder="Type playlist id here"
-              />
-            </label>
-            <label>
-              Video Id:
-              <input
-                type="text"
-                className="input input-ghost"
-                onChange={() => setVidErrors("")}
-                defaultValue={videoId}
-                name="videoIdInput"
-                placeholder="Type video id here"
-              />
-            </label>
-            <button
-              type="submit"
-              className="btn btn-accent btn-outline font-sans sm:ml-1"
+          <div className="flex flex-col collapse-content">
+            <p>Click on the paused/stopped timer to edit the limit!</p>
+            <form
+              onSubmit={handleSubmit}
+              className="text-2xl flex flex-col md:flex-row
+              justify-center"
             >
-              Submit
-            </button>
-          </form>
+              <label>
+                Playlist Id:
+                <input
+                  type="text"
+                  className="input input-ghost"
+                  onChange={() => setVidErrors("")}
+                  defaultValue={playlistId}
+                  name="playlistInput"
+                  placeholder="Type playlist id here"
+                />
+              </label>
+              <label>
+                Video Id:
+                <input
+                  type="text"
+                  className="input input-ghost"
+                  onChange={() => setVidErrors("")}
+                  defaultValue={videoId}
+                  name="videoIdInput"
+                  placeholder="Type video id here"
+                />
+              </label>
+              <button
+                type="submit"
+                className="btn btn-accent btn-outline font-sans sm:ml-1"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
           <div
             className={`alert alert-error font-mono ${
               vidErrors ? "" : "hidden"
@@ -83,11 +86,8 @@ export default function Home() {
             <span>{vidErrors}</span>
           </div>
         </div>
-        {/* <button className="btn">
-          <FontAwesomeIcon icon={faInfoCircle} />
-        </button> */}
       </div>
-      <CountdownApp
+      <TimerDate
         videoId={videoId}
         playlist={playlistId}
         initialTimeLimit={25 * 60}

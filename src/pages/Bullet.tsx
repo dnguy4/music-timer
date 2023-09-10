@@ -1,7 +1,7 @@
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import CountdownApp from "src/components/timerDate";
+import TimerDate from "src/components/timerDate";
 
 export default function BulletTime() {
   const [playlist, setPlaylist] = useState(
@@ -31,13 +31,13 @@ export default function BulletTime() {
         </label>
         <div
           className="tooltip tooltip-left 
-          text-sm font-sans absolute right-2 top-2"
+          text-md font-sans absolute right-2 top-2"
           data-tip="Click the emoji to swap games!"
         >
           <FontAwesomeIcon icon={faInfoCircle} />
         </div>
       </div>
-      <CountdownApp
+      <TimerDate
         videoId={videoId}
         playlist={playlist}
         initialTimeLimit={180}

@@ -1,11 +1,11 @@
-// Modified from https://stackoverflow.com/a/61572623
-import { useState, useEffect, useRef, CSSProperties } from "react";
+import { useState, useEffect, useRef } from "react";
 import YouTube, {
   YouTubeEvent,
   YouTubeProps,
   YouTubePlayer,
 } from "react-youtube";
 import invariant from "tiny-invariant";
+import EditableTime from "./editableTime";
 
 const STATUS = {
   STARTED: "Started",
@@ -19,7 +19,7 @@ type Props = {
   voiceAlert?: boolean;
 };
 
-export default function CountdownApp(props: Props) {
+export default function TimerDate(props: Props) {
   const {
     videoId,
     playlist,
@@ -36,7 +36,8 @@ export default function CountdownApp(props: Props) {
 
   const secondsToDisplay = secondsRemaining % 60;
   const minutesRemaining = (secondsRemaining - secondsToDisplay) / 60;
-  const minutesToDisplay = minutesRemaining % 60;
+  const minutesToDisplay = minutesRemaining;
+  // const minutesToDisplay = minutesRemaining % 60;
   // const hoursToDisplay = (minutesRemaining - minutesToDisplay) / 60;
 
   const colorsConfig: { [x: string]: { [y: string]: string } } = {
@@ -105,6 +106,7 @@ export default function CountdownApp(props: Props) {
     }
   };
 
+  // Modified from https://stackoverflow.com/a/61572623
   useInterval(
     () => {
       const diff = Date.now() - startTime;
@@ -146,18 +148,15 @@ export default function CountdownApp(props: Props) {
           onReady={handleReady}
           opts={opts}
         />
-        <div
-          className="countdown font-mono text-8xl m-auto text-white 
-        bg-slate-700 w-full md:w-2/3 justify-center border-y-2 md:border-4 border-sky-500"
-        >
-          <span
-            style={{ "--value": twoDigits(minutesToDisplay) } as CSSProperties}
-          />
-          :
-          <span
-            style={{ "--value": twoDigits(secondsToDisplay) } as CSSProperties}
-          />
-        </div>
+        <EditableTime
+          minutesToDisplay={minutesToDisplay}
+          secondsToDisplay={secondsToDisplay}
+          onSubmit={(seconds: number) => {
+            setSecondsRemaining(seconds);
+            setTimeLimit(seconds);
+          }}
+          disableEditing={status === STATUS.STARTED}
+        />
         <div className="join justify-center">
           <button onClick={handleStart} className="btn btn-primary join-item">
             Start
@@ -207,6 +206,3 @@ function useInterval(callback: CallableFunction, delay: number | null) {
     }
   }, [delay]);
 }
-
-// https://stackoverflow.com/a/2998874/1673761
-const twoDigits = (num: number) => String(num).padStart(2, "0");

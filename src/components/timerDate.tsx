@@ -134,6 +134,7 @@ export default function TimerDate(props: Props) {
       ...(playlist !== "" && { list: playlist }),
       listType: "playlist",
       enablejsapi: true,
+      origin: window.location.host,
     },
   };
 

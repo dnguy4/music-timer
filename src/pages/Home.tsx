@@ -20,13 +20,13 @@ export default function Home() {
     e.preventDefault();
     const { playlistInput, videoIdInput } = e.currentTarget;
 
-    const [playlistOk, videoOk, errorMsg] = await validatePlaylist(
+    const [validatedPlaylist, validatedVid, errorMsg] = await validatePlaylist(
       playlistInput.value,
       videoIdInput.value
     );
     setVidErrors(errorMsg);
-    if (playlistOk) setPlaylist(playlistInput.value);
-    if (videoOk) setVideoId(videoIdInput.value);
+    if (validatedPlaylist !== "") setPlaylist(validatedPlaylist);
+    if (validatedVid !== "") setVideoId(validatedVid);
   };
 
   return (
@@ -48,6 +48,17 @@ export default function Home() {
               className="text-2xl flex flex-col md:flex-row
               justify-center"
             >
+              {/* <label>
+                Time Limit (mins):
+                <input
+                  type="number"
+                  className="input input-ghost text-l"
+                  // onChange={() => setVidErrors("")}
+                  defaultValue={25}
+                  name="initalTimeLimit"
+                  placeholder="Type time limit here"
+                />
+              </label> */}
               <label>
                 Playlist Id:
                 <input

@@ -26,9 +26,12 @@ const playlistRe = /[&?]list=([^&]+)/i;
 export const validatePlaylist = async (
   playlist: string,
   video: string
-): Promise<[boolean, boolean, string]> => {
-  const videoId = video.match(videoRe)?.[7] ?? video;
-  const playlistId = playlist.match(playlistRe)?.[1] ?? playlist;
+): Promise<[string, string, string]> => {
+  const vm = video.match(videoRe);
+  const videoId = (vm ? vm[8] : video).trim();
+
+  const pm = playlist.match(playlistRe);
+  const playlistId = (pm ? pm[1] : playlist).trim();
 
   if (playlistId !== "" && videoId !== "") {
     const params = new URLSearchParams({
@@ -46,14 +49,14 @@ export const validatePlaylist = async (
         (x) => x.contentDetails.videoId === videoId
       );
       if (idx === -1) {
-        return [true, false, "Error: Requested video not in playlist"];
+        return [playlistId, "", "Error: Requested video not in playlist"];
       } else {
-        return [true, true, ""];
+        return [playlistId, videoId, ""];
       }
     } else {
-      return [false, true, "Error: Requested playlist not found"];
+      return ["", videoId, "Error: Requested playlist not found"];
     }
   } else {
-    return [true, true, ""];
+    return [playlistId, videoId, ""];
   }
 };

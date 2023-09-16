@@ -18,6 +18,9 @@ const ostPlaylists: { [x: string]: { [y: string]: string } } = {
 export default function BulletTime() {
   const [game, setGame] = useState("heart");
   const [vidVersion, setVidVersion] = useState("timerOff");
+  const [alertTimes, setAlertTimes] = useState([
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 30, 60, 120, 180,
+  ]);
 
   const swapPlaylist = () => {
     if (game === "heart") {
@@ -29,6 +32,16 @@ export default function BulletTime() {
   const toggleTimer = () => {
     setVidVersion(vidVersion === "timerOff" ? "timerOn" : "timerOff");
   };
+  const updateAlertTime = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.match("([0-9]+(,s?[0-9]+)*)?")) {
+      let newAlertTimes = e.target.value
+        .split(",")
+        .map((n: string) => parseInt(n, 10));
+      newAlertTimes = newAlertTimes.filter((x: any) => !Number.isNaN(x)); // Remove Nans
+      setAlertTimes(newAlertTimes);
+    }
+  };
+
   const videoId = "Ai8FB3ND_5c";
 
   return (
@@ -44,12 +57,12 @@ export default function BulletTime() {
           <span className="swap-on">Bullet⭐ Timer</span>
         </label>
       </div>
-      <div className="collapse collapse-arrow bg-slate-800 text-white sm:w-2/5 mb-2">
+      <div className="collapse collapse-arrow bg-slate-800 text-white sm:w-1/2 mb-2 sm:ml-2">
         <input type="checkbox" defaultChecked />
         <div className="collapse-title text-xl font-medium">
           Settings <FontAwesomeIcon icon={faGear} />
         </div>
-        <div className="flex flex-col place-items-start collapse-content">
+        <div className="grid sm:grid-cols-2 collapse-content">
           <div className="form-control">
             <label className="label cursor-pointer">
               <span className="pr-2">Heart</span>
@@ -61,8 +74,6 @@ export default function BulletTime() {
                 onChange={swapPlaylist}
               />
             </label>
-          </div>
-          <div className="form-control">
             <label className="label cursor-pointer">
               <span className="pr-2">Star</span>
               <input
@@ -74,7 +85,7 @@ export default function BulletTime() {
               />
             </label>
           </div>
-          <label className="label cursor-pointer">
+          <label className="label cursor-pointer sm:form-control">
             <span className="pr-2">Timer version of songs?</span>
             <input
               type="checkbox"
@@ -83,14 +94,28 @@ export default function BulletTime() {
               onChange={toggleTimer}
             ></input>
           </label>
-          <p>Click on the paused/stopped timer to edit the limit!</p>
+          <label className="label">
+            Alert Times (sec):
+            <input
+              type="text"
+              className="input input-bordered ml-2"
+              defaultValue={alertTimes.toString()}
+              onChange={(e) => updateAlertTime(e)}
+              pattern="([0-9]+(,\s?[0-9]+)*)?"
+              name="alertTime"
+            />
+          </label>
+
+          <p className="sm:col-span-2">
+            Click on the paused/stopped timer to edit it!
+          </p>
         </div>
       </div>
       <TimerDate
         videoId={videoId}
         playlist={ostPlaylists[game][vidVersion]}
         initialTimeLimit={vidVersion === "timerOff" ? 180 : 185}
-        voiceAlert={true}
+        voiceAlertTimes={alertTimes}
       />
       <p className="text-sm font-sans italic text-white p-1">
         This website is not associated with{" "}

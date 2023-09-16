@@ -16,7 +16,7 @@ type Props = {
   playlist: string;
   videoId: string;
   initialTimeLimit?: number;
-  voiceAlert?: boolean;
+  voiceAlertTimes?: number[];
 };
 
 export default function TimerDate(props: Props) {
@@ -24,7 +24,7 @@ export default function TimerDate(props: Props) {
     videoId,
     playlist,
     initialTimeLimit = 180,
-    voiceAlert = false,
+    voiceAlertTimes = [],
   } = props;
 
   const [secondsRemaining, setSecondsRemaining] = useState(initialTimeLimit);
@@ -91,22 +91,24 @@ export default function TimerDate(props: Props) {
   };
 
   const timeAlert = (remaining: number, prevRemaining: number) => {
-    const synth = window.speechSynthesis;
-    if (!voiceAlert || prevRemaining === remaining) return;
+    if (voiceAlertTimes.includes(remaining) && prevRemaining !== remaining) {
+      let message = "";
+      const seconds = remaining % 60;
+      if (remaining >= 60) {
+        message +=
+          minutesRemaining.toString() +
+          (minutesRemaining > 1 ? " minutes" : "minute");
+        message += seconds > 0 ? " and " : " left";
+      }
+      if (seconds > 10 || (remaining >= 60 && seconds > 0)) {
+        message += `${seconds.toString()} seconds left`;
+      } else if (minutesRemaining < 1) {
+        // Last ten seconds, don't say seconds
+        message += remaining.toString();
+      }
 
-    if (remaining > 0 && remaining % 60 === 0) {
-      const u = new SpeechSynthesisUtterance();
-      u.text =
-        minutesRemaining.toString() +
-        (minutesRemaining > 1 ? " minutes left" : "minute left");
-      synth.cancel();
-      synth.speak(u);
-    } else if (remaining === 30) {
-      const u = new SpeechSynthesisUtterance("30 seconds left");
-      synth.cancel();
-      synth.speak(u);
-    } else if (remaining <= 10) {
-      const u = new SpeechSynthesisUtterance(remaining.toString());
+      const u = new SpeechSynthesisUtterance(message);
+      const synth = window.speechSynthesis;
       synth.cancel();
       synth.speak(u);
     }

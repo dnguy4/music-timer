@@ -61,6 +61,12 @@ export default function TimerDate(props: Props) {
     timerColor = "bg-blue-700";
   }
 
+  useEffect(() => {
+    setStatus(STATUS.STOPPED);
+    setTimeLimit(initialTimeLimit);
+    setSecondsRemaining(initialTimeLimit);
+  }, [initialTimeLimit]);
+
   const handleStart = () => {
     if (secondsRemaining > 0 && status !== STATUS.STARTED) {
       speechSynthesis.speak(new SpeechSynthesisUtterance(""));
@@ -86,7 +92,7 @@ export default function TimerDate(props: Props) {
 
   const timeAlert = (remaining: number, prevRemaining: number) => {
     const synth = window.speechSynthesis;
-    if (!voiceAlert || synth.speaking || prevRemaining === remaining) return;
+    if (!voiceAlert || prevRemaining === remaining) return;
 
     if (remaining > 0 && remaining % 60 === 0) {
       const u = new SpeechSynthesisUtterance();
@@ -101,7 +107,7 @@ export default function TimerDate(props: Props) {
       synth.speak(u);
     } else if (remaining <= 10) {
       const u = new SpeechSynthesisUtterance(remaining.toString());
-      u.rate = 4;
+      synth.cancel();
       synth.speak(u);
     }
   };
@@ -179,8 +185,20 @@ export default function TimerDate(props: Props) {
             Shuffle
           </button>
         </div>
-        {/* <button className="btn btn-neutral self-center mr-2 hidden sm:block">&lt;</button>
-        <button className="btn btn-neutral self-center ml-2 hidden sm:block">&gt;</button> */}
+        <div className="flex flex-row justify-center pb-4">
+          <button
+            className="btn btn-neutral self-center mr-2 block"
+            onClick={() => player.previousVideo()}
+          >
+            &lt;
+          </button>
+          <button
+            className="btn btn-neutral self-center ml-2 block"
+            onClick={() => player.nextVideo()}
+          >
+            &gt;
+          </button>
+        </div>
       </div>
     </div>
   );

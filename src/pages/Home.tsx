@@ -1,9 +1,10 @@
 import { FormEvent, FormEventHandler, useState } from "react";
 import TimerDate from "src/components/timerDate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { validatePlaylist } from "../youtube/validatePlaylist";
 import { clamp } from "src/components/editableTime";
+import { Link } from "react-router-dom";
 
 interface ExampleForm extends HTMLFormElement {
   playlistInput: HTMLInputElement;
@@ -35,13 +36,13 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="bg-slate-700">
       <div
         className="font-serif sm:text-left text-center 
         space-y-2 bg-base-400 text-white p-2 container mx-auto"
       >
         <p className="text-6xl">Music Timer</p>
-        <div className="collapse collapse-arrow bg-base-200">
+        <div className="collapse collapse-arrow bg-slate-800">
           <input type="checkbox" defaultChecked />
           <div className="collapse-title text-xl font-medium w-15">
             Settings <FontAwesomeIcon icon={faGear} />
@@ -110,6 +111,11 @@ export default function Home() {
         playlist={playlistId}
         initialTimeLimit={initalTimeLimit * 60}
       />
+      <div className="grid w-full bg-blue-700">
+        <Link to={"/bullet"} className="justify-self-end">
+          <FontAwesomeIcon icon={faHeart} />
+        </Link>
+      </div>
     </div>
   );
 }

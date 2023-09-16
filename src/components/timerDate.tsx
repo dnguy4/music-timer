@@ -60,7 +60,7 @@ export default function TimerDate(props: Props) {
   if (percentageLeft < 4 && voiceAlertTimes.length > 0) {
     timerColor = colorsConfig[status][percentageLeft];
   } else {
-    timerColor = "bg-blue-700";
+    timerColor = "bg-blue-500";
   }
 
   useEffect(() => {

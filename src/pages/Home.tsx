@@ -18,7 +18,7 @@ export default function Home() {
   const [videoId, setVideoId] = useState("lTRiuFIWV54?si=K1rEv0xygqI1cJO5");
   const [vidErrors, setVidErrors] = useState("");
   const [initalTimeLimit, setInitialTimeLimit] = useState(25);
-  const [alertTimes, setAlertTimes] = useState([0, 60]);
+  const [alertTimes, setAlertTimes] = useState([]);
 
   const handleSubmit: FormEventHandler<ExampleForm> = async (
     e: FormEvent<HTMLFormElement>
@@ -69,7 +69,7 @@ export default function Home() {
                 <input
                   type="text"
                   className="input input-ghost ml-2"
-                  defaultValue={"0,60"}
+                  defaultValue={alertTimes.toString()}
                   pattern="([0-9]+(,\s?[0-9]+)*)?"
                   name="alertTime"
                   placeholder="List of times like 0,60,..."
@@ -133,7 +133,7 @@ export default function Home() {
         initialTimeLimit={initalTimeLimit * 60}
         voiceAlertTimes={alertTimes}
       />
-      <div className="grid w-full bg-blue-700">
+      <div className="grid w-full bg-inherit">
         <Link to={"/bullet"} className="justify-self-end">
           <FontAwesomeIcon icon={faHeart} />
         </Link>

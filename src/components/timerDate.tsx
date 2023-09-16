@@ -54,9 +54,11 @@ export default function TimerDate(props: Props) {
       3: "bg-green-500",
     },
   };
+
+  const percentageLeft = Math.floor((3 * secondsRemaining) / initialTimeLimit);
   let timerColor: string;
-  if (minutesRemaining < 4) {
-    timerColor = colorsConfig[status][minutesRemaining];
+  if (percentageLeft < 4 && voiceAlertTimes.length > 0) {
+    timerColor = colorsConfig[status][percentageLeft];
   } else {
     timerColor = "bg-blue-700";
   }
